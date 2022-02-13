@@ -1,5 +1,3 @@
-`define EOF -1
-
 module adc_test;
     reg clk = 1;
     reg start_sample_i;
