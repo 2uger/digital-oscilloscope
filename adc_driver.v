@@ -4,26 +4,31 @@ module adc_driver (
     input channel_num_i, // channel number
 
     output cs_o, // chip selection
-    output din_o, // data in
-    input dout_i, // data out
+    output din_o, // data to ADC
+    input dout_i, // data from ADC
 
     output data_ready_o,
     output [9:0] data_o
 );
-    localparam IDLE = 0;
+    localparam IDLE = 0; // do nothing, wait for controlled signal
     localparam START = 1; // send start bit and choose channel
     localparam READING = 2; // receiving serial data from ADC module
     localparam RESET = 3; // reset cs_o signal to receive new portion of data
 
     reg [1:0] state;
-    reg [3:0] counter; 
-    reg [3:0] recv_counter; // count how many bytes received
+    reg [3:0] start_bits_counter; // count serial translated start bits
+    reg [3:0] recv_bits_counter; // count how many bytes received
     reg [9:0] buffer; // store eventual data
 
     reg _cs_o;
     reg _din_o;
     reg _data_ready_o;
 
+    /* 
+    {start_bit, single/diff, D2, D1, D0}
+    Combination of single/diff, D2, D1, D0 will configure
+    input configuration and channel number
+    */
     reg [4:0] control_bit_selections;
 
     // assigning inside regs to output wire
@@ -35,17 +40,24 @@ module adc_driver (
 
     initial begin
         state = IDLE;
-        counter = 0;
-        recv_counter = 0;
-        buffer = 10'b0000000000;
-        _data_ready_o = 1'b0;
+        start_bits_counter = 0;
+        recv_bits_counter = 0;
+        buffer = 0;
+        _data_ready_o = 0;
     end
 
     always @ (posedge s_clk_i) begin
-        counter <= counter + 1;
+        case (state)
+            START:
+                start_bits_counter <= start_bits_counter + 1;
+        endcase
     end
 
     always @ (negedge s_clk_i) begin
+        case (state)
+            READING:
+                recv_bits_counter <= recv_bits_counter + 1;
+        endcase
     end
 
     always @ (posedge s_clk_i) begin
@@ -57,8 +69,8 @@ module adc_driver (
                     state <= IDLE;
             end
             READING: begin
-                buffer[recv_counter] <= dout_i;
-                if (recv_counter == 9) begin
+                buffer[recv_bits_counter] <= dout_i;
+                if (recv_bits_counter == 9) begin
                     _data_ready_o <= 1;
                     state <= RESET;
                 end else
@@ -69,25 +81,22 @@ module adc_driver (
 
     always @ (negedge s_clk_i) begin
         case (state)
-            READING: begin
-                recv_counter <= recv_counter + 1;
-            end
             START: begin
                 // start sampling
-                if (counter == 5)
+                if (start_bits_counter == 5)
                     state <= START;
                 // recv NULL bit
-                else if (counter == 6)
+                else if (start_bits_counter == 6)
                     state <= START;
-                else if (counter == 7) begin
-                    recv_counter <= 0;
+                else if (start_bits_counter == 7) begin
+                    recv_bits_counter <= 0;
                     state <= READING;
                 end
                 else
-                    _din_o <= control_bit_selections[counter];
+                    _din_o <= control_bit_selections[start_bits_counter];
 
-                _data_ready_o <= 1'b0;
-                _cs_o <= 1'b0;
+                _data_ready_o <= 0;
+                _cs_o <= 0;
             end
             RESET: begin
                 // choosing channel number
@@ -102,10 +111,10 @@ module adc_driver (
                     state <= IDLE;
 
                 // reset counters
-                counter <= -1;
-                recv_counter <= 0;
+                start_bits_counter <= -1;
+                recv_bits_counter <= 0;
 
-                _cs_o <= 1'b1;
+                _cs_o <= 1;
                 state <= START;
             end
         endcase
