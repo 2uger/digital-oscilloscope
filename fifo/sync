@@ -1,0 +1,56 @@
+#! /opt/homebrew/Cellar/icarus-verilog/11.0/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/system.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/v2005_math.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/va_math.vpi";
+S_0x148f04080 .scope module, "sync_write_read_pointer" "sync_write_read_pointer" 2 4;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "r_clk_i";
+    .port_info 1 /INPUT 1 "r_rst_i";
+    .port_info 2 /INPUT 8 "w_ptr_i";
+    .port_info 3 /OUTPUT 8 "r_w_ptr_o";
+P_0x6000021d8000 .param/l "PTR_WIDTH" 0 2 5, +C4<00000000000000000000000000001000>;
+L_0x600001fd8070 .functor BUFZ 8, v0x6000006d81b0_0, C4<00000000>, C4<00000000>, C4<00000000>;
+o0x140008010 .functor BUFZ 1, C4<z>; HiZ drive
+v0x6000006d8000_0 .net "r_clk_i", 0 0, o0x140008010;  0 drivers
+o0x140008040 .functor BUFZ 1, C4<z>; HiZ drive
+v0x6000006d8090_0 .net "r_rst_i", 0 0, o0x140008040;  0 drivers
+v0x6000006d8120_0 .var "r_w_ptr_1", 0 7;
+v0x6000006d81b0_0 .var "r_w_ptr_2", 0 7;
+v0x6000006d8240_0 .net "r_w_ptr_o", 0 7, L_0x600001fd8070;  1 drivers
+o0x140008100 .functor BUFZ 8, C4<zzzzzzzz>; HiZ drive
+v0x6000006d82d0_0 .net "w_ptr_i", 0 7, o0x140008100;  0 drivers
+E_0x600003ad8000/0 .event negedge, v0x6000006d8090_0;
+E_0x600003ad8000/1 .event posedge, v0x6000006d8000_0;
+E_0x600003ad8000 .event/or E_0x600003ad8000/0, E_0x600003ad8000/1;
+    .scope S_0x148f04080;
+T_0 ;
+    %wait E_0x600003ad8000;
+    %load/vec4 v0x6000006d8090_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %pushi/vec4 0, 0, 16;
+    %split/vec4 8;
+    %assign/vec4 v0x6000006d8120_0, 0;
+    %assign/vec4 v0x6000006d81b0_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v0x6000006d8120_0;
+    %load/vec4 v0x6000006d82d0_0;
+    %concat/vec4; draw_concat_vec4
+    %split/vec4 8;
+    %assign/vec4 v0x6000006d8120_0, 0;
+    %assign/vec4 v0x6000006d81b0_0, 0;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "sync_wr_pointer.v";
