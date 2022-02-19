@@ -1,15 +1,15 @@
 module fifo_ram 
-    #(parameter DATA_WIDTH=12,
-      parameter MEM_SIZE=256)
+    #(parameter DATA_SIZE=12,
+      parameter ADDR_SIZE=8)
     (input w_clk_i,
      input w_clk_en_i,
      input w_addr_i,
-     input [0:DATA_WIDTH-1] w_data,
+     input [DATA_SIZE-1:0] w_data,
 
      input r_addr_i,
      output r_data_o);
 
-    reg [0:DATA_WIDTH-1] memory [0:MEM_SIZE];
+    reg [DATA_SIZE-1:0] memory [2**ADDR_SIZE-1:0];
 
     always @ (posedge w_clk_i) begin
         if (w_clk_en_i)
