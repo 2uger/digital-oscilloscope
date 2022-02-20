@@ -31,9 +31,9 @@ module write_ptr_tb;
 
     always @ (posedge clk) begin
         if (fifo_full) begin
-            $display("FIFO is full, write address: %b, gray code: %b", w_addr, w_ptr);
+            $display("FIFO is full, write address: %b, write pointer: %b == wr pointer: %b", w_addr, w_ptr, wr_ptr_2);
             $finish;
         end
-        $display("Write address : %b, gray code: %b", w_addr, w_ptr);
+        $display("Write address : %b, write pointer: %b", w_addr, w_ptr);
     end
 endmodule
