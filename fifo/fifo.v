@@ -27,7 +27,7 @@ module fifo # (parameter DATA_SIZE=12,
             .inc_i(w_inc_i),
             .ptr_o(w_ptr),
             .addr_o(w_addr),
-            .fifo_full_o(w_full_0));
+            .fifo_full_o(w_full_o));
 
     wire [ADDR_SIZE:0] rw_ptr_2;
     wire [ADDR_SIZE:0] r_ptr;

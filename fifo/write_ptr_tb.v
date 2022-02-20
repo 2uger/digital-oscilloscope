@@ -1,6 +1,6 @@
 `timescale 10us/100ns
 module write_ptr_tb;
-    localparam ADDR_SIZE = 3;
+    localparam ADDR_SIZE = 2;
     reg clk = 0;
     reg rst = 0;
     reg [ADDR_SIZE:0] wr_ptr_2 = 0;
@@ -27,13 +27,17 @@ module write_ptr_tb;
         rst = 1;
         wr_ptr_2 = 0;
         inc = 1;
+        # 40;
+        wr_ptr_2 = 3'b010;
+        # 70;
+        wr_ptr_2 = 3'b100;
+        # 70;
+        $finish;
     end
 
     always @ (posedge clk) begin
         if (fifo_full) begin
-            $display("FIFO is full, write address: %b, write pointer: %b == wr pointer: %b", w_addr, w_ptr, wr_ptr_2);
-            $finish;
         end
-        $display("Write address : %b, write pointer: %b", w_addr, w_ptr);
+        //$display("Write address : %b, write pointer: %b", w_addr, w_ptr);
     end
 endmodule

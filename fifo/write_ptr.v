@@ -10,7 +10,7 @@ module write_ptr #(parameter ADDR_SIZE=8)
                    output fifo_full_o);
 
     wire _fifo_full;
-    assign _fifo_full = {~wr_ptr_2_i[ADDR_SIZE], wr_ptr_2_i[ADDR_SIZE-1:0]} == gray_cnt;
+    assign _fifo_full = {~wr_ptr_2_i[ADDR_SIZE], ~wr_ptr_2_i[ADDR_SIZE-1], wr_ptr_2_i[ADDR_SIZE-2:0]} == (((bin_cnt + 1) >> 1) ^ (bin_cnt + 1));
     assign fifo_full_o = _fifo_full;
 
     // for binary and gray code counters
@@ -26,11 +26,12 @@ module write_ptr #(parameter ADDR_SIZE=8)
         else begin
             bin_cnt <= bin_n;
             gray_cnt <= gray_n;
+            $display("write pointer: %b, wr pointer: %b, bin cnt: %b, bin n: %b, fifo full: %b",ptr_o, wr_ptr_2_i, bin_cnt, bin_n, _fifo_full);
         end
     end
 
     assign gray_n = (bin_n >> 1) ^ bin_n;
-    assign bin_n = bin_cnt + (!_fifo_full & inc_i);
+    assign bin_n = bin_cnt + ((!_fifo_full) & inc_i);
 
     assign ptr_o = gray_cnt;
     assign addr_o = bin_cnt[ADDR_SIZE-1:0];
