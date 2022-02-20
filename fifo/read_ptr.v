@@ -1,16 +1,16 @@
-module read_pointer #(parameter ADDR_SIZE=8)
-                     (input clk_i,
-                      input rst_i,
+module read_ptr #(parameter ADDR_SIZE=8)
+                 (input clk_i,
+                  input rst_i,
 
-                      input [ADDR_SIZE:0]wr_ptr_i,
-                      input inc_i, // signal to increment read pointer
+                  input [ADDR_SIZE:0] rw_ptr_2_i,
+                  input inc_i, // signal to increment read pointer
 
-                      output [ADDR_SIZE:0] ptr_o,
-                      output [ADDR_SIZE-1:0] addr_o,
-                      output fifo_empty_o);
+                  output [ADDR_SIZE:0] ptr_o,
+                  output [ADDR_SIZE-1:0] addr_o,
+                  output fifo_empty_o);
 
     wire _fifo_empty;
-    assign _fifo_empty = wr_ptr_i == gray_cnt;
+    assign _fifo_empty = rw_ptr_2_i == gray_cnt;
     assign fifo_empty_o = _fifo_empty;
 
     // for binary and gray code counters
@@ -29,8 +29,8 @@ module read_pointer #(parameter ADDR_SIZE=8)
         end
     end
 
-    assign gray_n = (bin_cnt >> 1) ^ bin_cnt;
-    assign bin_n = bin_n + (!_fifo_empty & inc_i);
+    assign gray_n = (bin_n >> 1) ^ bin_n;
+    assign bin_n = bin_cnt + (!_fifo_empty & inc_i);
 
     assign ptr_o = gray_cnt;
     assign addr_o = bin_cnt[ADDR_SIZE-1:0];
