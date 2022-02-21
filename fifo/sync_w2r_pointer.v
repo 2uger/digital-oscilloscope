@@ -1,12 +1,12 @@
 module sync_w2r_pointer # (parameter ADDR_SIZE=8)
                           (input r_clk_i,
                            input r_rst_i,
-                           input [ADDR_SIZE:0] w_ptr_i,
+                           input [ADDR_SIZE-1:0] w_ptr_i,
 
-                           output [ADDR_SIZE:0] rw_ptr_o);
+                           output [ADDR_SIZE-1:0] rw_ptr_o);
 
-     reg [ADDR_SIZE:0] rw_ptr_1;
-     reg [ADDR_SIZE:0] rw_ptr_2;
+     reg [ADDR_SIZE-1:0] rw_ptr_1;
+     reg [ADDR_SIZE-1:0] rw_ptr_2;
 
      always @ (posedge r_clk_i or negedge r_rst_i) begin
         if (!r_rst_i)

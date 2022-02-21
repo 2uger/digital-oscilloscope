@@ -2,6 +2,7 @@
 module fifo_tb;
     localparam DATA_SIZE=4;
     localparam ADDR_SIZE=2;
+    localparam TEST_VALUES=8;
 
     reg w_clk = 1;
     reg w_rst = 0;
@@ -18,8 +19,8 @@ module fifo_tb;
     wire fifo_full;
     wire fifo_empty;
 
-    wire [ADDR_SIZE:0] wr_ptr_2;
-    wire [ADDR_SIZE:0] w_ptr;
+    wire [ADDR_SIZE-1:0] wr_ptr_2;
+    wire [ADDR_SIZE-1:0] w_ptr;
     wire [ADDR_SIZE-1:0] w_addr;
 
     write_ptr #(.ADDR_SIZE(ADDR_SIZE))
@@ -31,8 +32,8 @@ module fifo_tb;
             .addr_o(w_addr),
             .fifo_full_o(fifo_full));
 
-    wire [ADDR_SIZE:0] rw_ptr_2;
-    wire [ADDR_SIZE:0] r_ptr;
+    wire [ADDR_SIZE-1:0] rw_ptr_2;
+    wire [ADDR_SIZE-1:0] r_ptr;
     wire [ADDR_SIZE-1:0] r_addr;
 
     read_ptr #(.ADDR_SIZE(ADDR_SIZE))
@@ -69,6 +70,9 @@ module fifo_tb;
     integer file;
     integer line_num = 0;
 
+    integer j;
+    reg [DATA_SIZE-1:0] r_mem [TEST_VALUES:0];
+
     initial begin
         $dumpfile("fifo_tb.vcd");
         $dumpvars(0, fifo_tb);
@@ -83,20 +87,27 @@ module fifo_tb;
         w_rst = 1;
         r_rst = 1;
 
-        while (line_num < 10) begin
-            if (fifo_full) begin
-                # 4;
-            end else begin
+        while (line_num < TEST_VALUES) begin
+            if (fifo_full) # 2;
+            else begin
                 r <= $fscanf(file, "%b\n", w_data);
-                # 4;
                 line_num = line_num + 1;
+                # 4;
             end
         end
         # 50;
+
+        $display("Values were read:");
+        for (j = 0; j < TEST_VALUES; j = j + 1) begin
+            $display("Addr: %h, value: %b", j, r_mem[j]);
+        end
         $finish;
     end
-
-    always @ (posedge w_clk) begin
+    
+    integer i = 0;
+    always @ (posedge r_data or negedge r_data) begin
+        r_mem[i] <= r_data;
+        i = i + 1;
     end
 
     always # 2 w_clk = !w_clk;

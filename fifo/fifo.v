@@ -16,8 +16,8 @@ module fifo # (parameter DATA_SIZE=12,
                output w_full_o,
                output r_empty_o);
     
-    wire [ADDR_SIZE:0] wr_ptr_2;
-    wire [ADDR_SIZE:0] w_ptr;
+    wire [ADDR_SIZE-1:0] wr_ptr_2;
+    wire [ADDR_SIZE-1:0] w_ptr;
     wire [ADDR_SIZE-1:0] w_addr;
 
     write_ptr #(.ADDR_SIZE(ADDR_SIZE))
@@ -29,8 +29,8 @@ module fifo # (parameter DATA_SIZE=12,
             .addr_o(w_addr),
             .fifo_full_o(w_full_o));
 
-    wire [ADDR_SIZE:0] rw_ptr_2;
-    wire [ADDR_SIZE:0] r_ptr;
+    wire [ADDR_SIZE-1:0] rw_ptr_2;
+    wire [ADDR_SIZE-1:0] r_ptr;
     wire [ADDR_SIZE-1:0] r_addr;
 
     read_ptr #(.ADDR_SIZE(ADDR_SIZE))
