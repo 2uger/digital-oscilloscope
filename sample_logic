@@ -1,0 +1,105 @@
+#! /opt/homebrew/Cellar/icarus-verilog/11.0/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/system.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/v2005_math.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/va_math.vpi";
+S_0x132704080 .scope module, "sample_logic" "sample_logic" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk_i";
+    .port_info 1 /INPUT 1 "rst_i";
+    .port_info 2 /INPUT 12 "sample_data_i";
+    .port_info 3 /INPUT 1 "fifo_full_i";
+    .port_info 4 /INPUT 1 "fifo_empty_i";
+    .port_info 5 /OUTPUT 1 "w_en_o";
+P_0x600002844000 .param/l "ADDR_SIZE" 0 2 2, +C4<00000000000000000000000000001000>;
+P_0x600002844040 .param/l "DATA_SIZE" 0 2 1, +C4<00000000000000000000000000001100>;
+L_0x600002d44070 .functor AND 1, v0x6000034445a0_0, L_0x600003744000, C4<1>, C4<1>;
+v0x600003444090_0 .net *"_ivl_1", 0 0, L_0x600003744000;  1 drivers
+o0x128008040 .functor BUFZ 1, C4<z>; HiZ drive
+v0x600003444120_0 .net "clk_i", 0 0, o0x128008040;  0 drivers
+v0x6000034441b0_0 .var "fifo_empty_1", 0 0;
+v0x600003444240_0 .var "fifo_empty_2", 0 0;
+o0x1280080d0 .functor BUFZ 1, C4<z>; HiZ drive
+v0x6000034442d0_0 .net "fifo_empty_i", 0 0, o0x1280080d0;  0 drivers
+o0x128008100 .functor BUFZ 1, C4<z>; HiZ drive
+v0x600003444360_0 .net "fifo_full_i", 0 0, o0x128008100;  0 drivers
+o0x128008130 .functor BUFZ 1, C4<z>; HiZ drive
+v0x6000034443f0_0 .net "rst_i", 0 0, o0x128008130;  0 drivers
+o0x128008160 .functor BUFZ 12, C4<zzzzzzzzzzzz>; HiZ drive
+v0x600003444480_0 .net "sample_data_i", 11 0, o0x128008160;  0 drivers
+v0x600003444510_0 .net "trigger", 0 0, L_0x600002d44070;  1 drivers
+v0x6000034445a0_0 .var "trigger_threshold_1", 0 0;
+v0x600003444630_0 .var "trigger_threshold_2", 0 0;
+v0x6000034446c0_0 .var "w_en_o", 0 0;
+E_0x600000844030/0 .event negedge, v0x6000034443f0_0;
+E_0x600000844030/1 .event posedge, v0x600003444120_0;
+E_0x600000844030 .event/or E_0x600000844030/0, E_0x600000844030/1;
+E_0x600000844060 .event posedge, v0x600003444120_0;
+L_0x600003744000 .reduce/nor v0x600003444630_0;
+    .scope S_0x132704080;
+T_0 ;
+    %wait E_0x600000844030;
+    %load/vec4 v0x6000034443f0_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x6000034445a0_0, 0;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x600003444630_0, 0;
+T_0.0 ;
+    %load/vec4 v0x6000034445a0_0;
+    %pushi/vec4 128, 0, 12;
+    %load/vec4 v0x600003444480_0;
+    %cmp/u;
+    %flag_get/vec4 4;
+    %flag_get/vec4 5;
+    %or;
+    %concat/vec4; draw_concat_vec4
+    %split/vec4 1;
+    %assign/vec4 v0x6000034445a0_0, 0;
+    %assign/vec4 v0x600003444630_0, 0;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_0x132704080;
+T_1 ;
+    %wait E_0x600000844060;
+    %load/vec4 v0x6000034441b0_0;
+    %load/vec4 v0x6000034442d0_0;
+    %concat/vec4; draw_concat_vec4
+    %split/vec4 1;
+    %assign/vec4 v0x6000034441b0_0, 0;
+    %assign/vec4 v0x600003444240_0, 0;
+    %jmp T_1;
+    .thread T_1;
+    .scope S_0x132704080;
+T_2 ;
+    %wait E_0x600000844030;
+    %load/vec4 v0x6000034443f0_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_2.0, 8;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x6000034446c0_0, 0;
+    %jmp T_2.1;
+T_2.0 ;
+    %load/vec4 v0x600003444240_0;
+    %load/vec4 v0x600003444510_0;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_2.2, 8;
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x6000034446c0_0, 0;
+T_2.2 ;
+T_2.1 ;
+    %jmp T_2;
+    .thread T_2;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "sample_logic.v";
