@@ -22,8 +22,7 @@ module write_ptr #(parameter ADDR_SIZE=8)
         if (!rst_i) begin
             bin_cnt <= 0; 
             bin_cnt_1 <= 1; 
-        end
-        else {bin_cnt, bin_cnt_1} <= {bin_n, bin_n_1};
+        end else {bin_cnt, bin_cnt_1} <= {bin_n, bin_n_1};
         //$display("Bin cnt: %b, wr ptr: %b, bin n: %b, full: %b", bin_cnt, wr_ptr_2_i, bin_n, _fifo_full);
     end
 

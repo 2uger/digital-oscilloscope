@@ -1,14 +1,14 @@
 /* High level module of FIFO */
 module fifo # (parameter DATA_SIZE=12,
                parameter ADDR_SIZE=8)
-              (input w_clk_i,
+              (input w_clk_i, // write clock
                input w_rst_i,
 
-               input r_clk_i,
+               input r_clk_i, // read clock
                input r_rst_i,
 
-               input w_inc_i,
-               input r_inc_i,
+               input w_inc_i, // write enable
+               input r_inc_i, // read enable
 
                input [DATA_SIZE-1:0] w_data_i,
                output [DATA_SIZE-1:0] r_data_o,
@@ -51,15 +51,15 @@ module fifo # (parameter DATA_SIZE=12,
              .r_addr_i(r_addr),
              .r_data_o(r_data_o));
 
-    sync_r2w_pointer #(.ADDR_SIZE(ADDR_SIZE))
-        sync_r2w (.w_clk_i(w_clk_i),
-                  .w_rst_i(w_rst_i),
-                  .r_ptr_i(r_ptr),
-                  .wr_ptr_o(wr_ptr_2));
+    sync_pointer #(.ADDR_SIZE(ADDR_SIZE))
+        sync_r2w (.clk_i(w_clk_i),
+                  .rst_i(w_rst_i),
+                  .ptr_i(r_ptr),
+                  .ptr_o(wr_ptr_2));
 
-    sync_w2r_pointer #(.ADDR_SIZE(ADDR_SIZE))
-        sync_w2r (.r_clk_i(r_clk_i),
-                  .r_rst_i(r_rst_i),
-                  .w_ptr_i(w_ptr),
-                  .rw_ptr_o(rw_ptr_2));
+    sync_pointer #(.ADDR_SIZE(ADDR_SIZE))
+        sync_w2r (.clk_i(r_clk_i),
+                  .rst_i(r_rst_i),
+                  .ptr_i(w_ptr),
+                  .ptr_o(rw_ptr_2));
 endmodule
