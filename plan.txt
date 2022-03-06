@@ -1,0 +1,12 @@
+1. 
+    Start with ADC driver to control ADC module and make output as 
+    N-bit width register for futher processing.
+    Test for this, emulate output of ADC as serial bit flow
+2. 
+    Simple FIFO with controlling signals to be able to stop writing and resume it
+
+IDEA:
+ Testbench for adc driver could read from file, why not to emulate signal as writing values to that file
+ from C code, and at the same time we coud write into another file from verilog testbench and read it from
+ C code and somehow show up values as plot
+

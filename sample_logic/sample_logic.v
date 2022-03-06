@@ -23,6 +23,7 @@ module sample_logic # (parameter DATA_SIZE=12,
         end
     end
 
+    // detecting rising edge trigger
     assign trigger = trigger_threshold_1 & !trigger_threshold_2;
     assign trigger_o = trigger;
 
