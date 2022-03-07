@@ -6,6 +6,8 @@ module sample_logic # (parameter DATA_SIZE=12,
                        input [DATA_SIZE-1:0] sample_data_i,
                        
                        input fifo_empty_i,
+                       input fifo_full_i,
+                       input acquiring_i, // control signal from pc
 
                        output reg w_en_o,
                        output trigger_o);
@@ -28,10 +30,13 @@ module sample_logic # (parameter DATA_SIZE=12,
     assign trigger_o = trigger;
 
     // synchronise signal from different clock domain
+    reg fifo_full_1;
+    reg fifo_full_2;
     reg fifo_empty_1;
     reg fifo_empty_2;
     always @ (posedge clk_i) begin
         {fifo_empty_2, fifo_empty_1} <= {fifo_empty_1, fifo_empty_i};
+        {fifo_full_2, fifo_full_1} <= {fifo_full_1, fifo_full_i};
     end
 
     reg state;
@@ -46,7 +51,7 @@ module sample_logic # (parameter DATA_SIZE=12,
         else begin
             case (state)
                 IDLE: begin
-                    if (fifo_empty_2 & trigger) begin
+                    if (fifo_empty_2 & trigger & acquiring_i) begin
                         state <= ACQUIRING;
                         w_en_o <= 1;
                     end else begin
@@ -55,12 +60,10 @@ module sample_logic # (parameter DATA_SIZE=12,
                     end
                 end
                 ACQUIRING: begin
-                    if (fifo_empty_2) begin
-                        state <= ACQUIRING;
-                    end else begin
+                    if (fifo_full_2 | !acquiring_i) begin
                         state <= IDLE;
                         w_en_o <= 0;
-                    end
+                    end 
                 end
             endcase
         end
