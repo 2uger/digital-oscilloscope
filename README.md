@@ -3,6 +3,8 @@
 FPGA based digital oscilloscope</br>
 Parts:
 ### ADC driver
+Module to control ADC MCP3004/3008 and receive data from it</br>
+Learn more in sources
 ### Asynchronous FIFO
 Consists from:
 * Memory</br>
@@ -12,9 +14,11 @@ Consists from:
     Write pointer generate address for next free place and signal about is fifo FULL.<br>
     Read pointer generate address for next cell to read and signal about is fifo EMPTY.<br>
     Because of synchronisation problems between two clock domains,<br>
-    we use Gray code for counting instead binary one.<br>
-    It change only one bit at time, means chances for data synchronisation problems is much lower.<br>
+    we need synchronizer between read and write pointers.<br>
 * Synchronisers<br>
   Basic double flip-flop to synchronise signal between read and write pointers
-
+### Controller
+Receive commands from PC, send signals to ADC driver and Sample Logic modules to start acquiring data
+### Sample logic
+Capture data from ADC driver to know when to TRIGGER and send signal about writing data into FIFO
 
