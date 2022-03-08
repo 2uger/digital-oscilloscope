@@ -48,24 +48,10 @@ module adc_driver (
 
     always @ (posedge s_clk_i) begin
         case (state)
-            START:
-                start_bits_counter <= start_bits_counter + 1;
-        endcase
-    end
-
-    always @ (negedge s_clk_i) begin
-        case (state)
-            READING:
-                recv_bits_counter <= recv_bits_counter + 1;
-        endcase
-    end
-
-    always @ (posedge s_clk_i) begin
-        case (state)
             IDLE: begin
-                if (start_sample_i)
+                if (start_sample_i) begin
                     state <= RESET;
-                else
+                end else
                     state <= IDLE;
             end
             READING: begin
@@ -75,12 +61,30 @@ module adc_driver (
                     state <= RESET;
                 end else
                     state <= READING;
+
+                recv_bits_counter <= recv_bits_counter + 1;
             end
         endcase
     end
 
     always @ (negedge s_clk_i) begin
         case (state)
+            RESET: begin
+                // choosing channel number
+                case (channel_num_i)
+                    1: 
+                        control_bit_selections = 5'b00011;
+                    2:
+                        control_bit_selections = 5'b11001;
+                endcase
+
+                // reset counters
+                start_bits_counter <= 0;
+                recv_bits_counter <= 0;
+
+                _cs_o <= 1;
+                state <= START;
+            end
             START: begin
                 // start sampling
                 if (start_bits_counter == 5)
@@ -91,31 +95,13 @@ module adc_driver (
                 else if (start_bits_counter == 7) begin
                     recv_bits_counter <= 0;
                     state <= READING;
-                end
-                else
+                end else
                     _din_o <= control_bit_selections[start_bits_counter];
+
+                start_bits_counter <= start_bits_counter + 1;
 
                 _data_ready_o <= 0;
                 _cs_o <= 0;
-            end
-            RESET: begin
-                // choosing channel number
-                case (channel_num_i)
-                    1: 
-                        control_bit_selections = 5'b00011;
-                    2:
-                        control_bit_selections = 5'b11001;
-                endcase
-                // check for stop signal
-                if (!start_sample_i)
-                    state <= IDLE;
-
-                // reset counters
-                start_bits_counter <= -1;
-                recv_bits_counter <= 0;
-
-                _cs_o <= 1;
-                state <= START;
             end
         endcase
     end
