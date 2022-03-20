@@ -1,8 +1,8 @@
 ## Digital oscilloscope
 
 ### Sources:
-[Ready to build oscilloscope](https://www.instructables.com/DPScope-Build-Your-Own-USBPC-Based-Oscilloscope/)
-[Example of oscilloscope written in Verilog](https://github.com/Oguzhanka/Digital-Signal-Oscilloscope)
+* [Ready to build oscilloscope](https://www.instructables.com/DPScope-Build-Your-Own-USBPC-Based-Oscilloscope/)
+* [Example of oscilloscope written in Verilog](https://github.com/Oguzhanka/Digital-Signal-Oscilloscope)
 FPGA based digital oscilloscope</br>
 Parts:
 ### ADC driver
